@@ -171,12 +171,33 @@ app.whenReady().then(async () => {
       ? pass(`next match advanced: ${firstActive} -> ${nextActive}`)
       : fail(`next match did not advance (still ${nextActive})`);
 
+    // A fixed sleep after an action is a guess about how fast the machine is.
+    // CI is slower than a desktop and the reader re-rasterises every visible
+    // page on a zoom, so poll for the change instead. This cannot hide a real
+    // failure: if the value never changes, the caller still sees the old one
+    // and asserts against it.
+    const settles = async (read, from, ms = 8000) => {
+      const deadline = Date.now() + ms;
+      let value = from;
+      let stable = 0;
+      while (Date.now() < deadline) {
+        await sleep(100);
+        const now = await read();
+        if (now === from) continue;             // has not moved yet
+        if (now !== value) { value = now; stable = 0; continue; }
+        // Changed, and has now held still. Returning on the first changed read
+        // instead would hand the next step a view that is still rasterising,
+        // which surfaces much later as an empty text selection.
+        if (++stable >= 4) return now;
+      }
+      return value;
+    };
+
     // 11. Zoom changes the rendered size.
     const widthAt = () => js(`Math.round(document.querySelector('.rpage').getBoundingClientRect().width)`);
     const beforeZoom = await widthAt();
     await js(`document.querySelector('[aria-label="Zoom in"]').click()`);
-    await sleep(600);
-    const afterZoom = await widthAt();
+    const afterZoom = await settles(widthAt, beforeZoom);
     afterZoom > beforeZoom
       ? pass(`zoom in widened the page ${beforeZoom} -> ${afterZoom}px`)
       : fail(`zoom did nothing: ${beforeZoom} -> ${afterZoom}`);
@@ -345,8 +366,7 @@ app.whenReady().then(async () => {
         touches: [], targetTouches: [], changedTouches: [], bubbles: true,
       }));
     })()`);
-    await sleep(600);
-    const pinchedTo = await widthAt();
+    const pinchedTo = await settles(widthAt, pinchedFrom);
     pinchedTo > pinchedFrom
       ? pass(`pinch zoomed the page ${pinchedFrom} -> ${pinchedTo}px`)
       : fail(`pinch did nothing: ${pinchedFrom} -> ${pinchedTo}`);
