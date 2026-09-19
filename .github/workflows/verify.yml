@@ -1,0 +1,41 @@
+name: verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A newer push to the same branch makes the running one pointless.
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    # Windows is not a preference here. The integration tests read every output
+    # back with `vendor/qpdf/qpdf.exe` rather than trusting the writer they are
+    # testing, and the repository ships no Linux qpdf binary. The end-to-end
+    # suites also drive a real Electron renderer.
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      # `public/` holds the pdf.js cmaps and standard fonts, the Tesseract core
+      # and language data, and the Noto font -- everything the renderer fetches
+      # by URL at run time. They are staged out of node_modules and vendor/
+      # rather than committed, and `npm run verify` does not do it itself, so a
+      # clean checkout has to stage them before the end-to-end suites run.
+      - run: npm run assets
+
+      # audit, typecheck, 255 unit tests, and four end-to-end suites that drive
+      # the real screens in a real Electron renderer.
+      - run: npm run verify

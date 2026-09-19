@@ -1,0 +1,60 @@
+name: Bug report
+description: Something behaves differently from what it says it does.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The app is offline, so please include the file if you can — most bugs
+        here are really "this particular PDF". Redact it first if it matters;
+        a reduced file that still reproduces is ideal.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what you expected instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open …
+        2. …
+        3. …
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Windows (installer)
+        - Windows (portable .exe)
+        - Windows (built from source)
+        - Android (APK)
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: From the About screen, or the commit you built.
+
+  - type: dropdown
+    id: language
+    attributes:
+      label: Interface language
+      options: [English, Hebrew]
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: |
+        Error text verbatim if there was any. On Android you can reach the
+        console with `chrome://inspect` in desktop Chrome over USB.

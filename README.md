@@ -1,5 +1,8 @@
 # PDF Toolkit
 
+[![verify](https://github.com/roil13/pdf-tools/actions/workflows/verify.yml/badge.svg)](https://github.com/roil13/pdf-tools/actions/workflows/verify.yml)
+[![licence: MIT](https://img.shields.io/badge/licence-MIT-blue.svg)](LICENSE)
+
 A small, offline PDF toolkit for Windows and Android. No file ever leaves your computer,
 nothing is uploaded, everything works with no internet connection, and there are
 no AI features.
@@ -169,11 +172,19 @@ its `LICENSE.txt` and `NOTICE.md` alongside the binaries in `vendor/qpdf/` and
 
 ## Third-party components
 
-| | Licence |
-|---|---|
-| [qpdf](https://qpdf.sourceforge.io/) 12.4.1 — native on Windows, and compiled to WebAssembly for Android (`scripts/build-qpdf-wasm.md`) | Apache-2.0 |
-| [pdf.js](https://mozilla.github.io/pdf.js/) | Apache-2.0 |
-| [Tesseract](https://github.com/tesseract-ocr/tesseract) / tesseract.js | Apache-2.0 |
-| [pdf-lib](https://pdf-lib.js.org/) | MIT |
-| [Noto Sans Hebrew](https://fonts.google.com/noto/specimen/Noto+Sans+Hebrew) | OFL-1.1 |
-| Electron, React, dnd-kit, UTIF, libheif-js | MIT / LGPL |
+Everything redistributed in `vendor/` carries its own licence text and a NOTICE
+beside the files, as those licences require.
+
+| | Licence | Text |
+|---|---|---|
+| [qpdf](https://qpdf.sourceforge.io/) 12.4.1 — native on Windows, and compiled to WebAssembly for Android (`scripts/build-qpdf-wasm.md`) | Apache-2.0 | [`vendor/qpdf/`](vendor/qpdf/LICENSE.txt), [`vendor/qpdf-wasm/`](vendor/qpdf-wasm/LICENSE.txt) |
+| [Tesseract](https://github.com/tesseract-ocr/tesseract) language data | Apache-2.0 | [`vendor/tessdata/`](vendor/tessdata/LICENSE.txt) |
+| [Noto Sans Hebrew](https://github.com/notofonts/hebrew) | OFL-1.1 | [`vendor/fonts/OFL.txt`](vendor/fonts/OFL.txt) |
+| [pdf.js](https://mozilla.github.io/pdf.js/), tesseract.js | Apache-2.0 | npm |
+| [pdf-lib](https://pdf-lib.js.org/) | MIT | npm |
+| Electron, React, dnd-kit, UTIF, libheif-js | MIT / LGPL | npm |
+
+`vendor/qpdf/` also contains the Microsoft Visual C++ runtime DLLs that the qpdf
+build links against (`msvcp140`, `vcruntime140`, `concrt140`). They are
+redistributable under Microsoft's terms but are not open source, and they are
+Windows-only — the Android build uses the WebAssembly qpdf and none of them.
