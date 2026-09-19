@@ -110,6 +110,24 @@ Without `keystore.properties` the build still works; it simply refuses to
 produce a release APK, because an unsigned one is worse than useless (Android
 declines to install it).
 
+### Store metadata
+
+`fastlane/metadata/android/<locale>/` holds the description, icon, changelog and
+screenshots that [IzzyOnDroid](https://izzyondroid.org) reads straight out of
+this repository. `en-US` is the fallback; `he` mirrors it.
+
+A changelog file is named after the **versionCode**, not the version name, so
+0.1.1 is `changelogs/101.txt`. `installSigningAndVersion()` derives that code as
+`major * 10000 + minor * 100 + patch`.
+
+Screenshots are padded to 1200x2400 rather than cropped: the catalogue caps them
+at a 2:1 height-to-width ratio and a phone screen is 2.22:1, so cropping to fit
+would cut either the reader toolbar or the tab bar.
+
+The catalogue picks up a new version automatically once a release is tagged and
+a release-signed APK is attached to it -- which is what `npm run
+android:apk:release` produces.
+
 ### Why the signing config is injected rather than committed
 
 `android/app/build.gradle` is **generated**. A `signingConfig` added to it by
