@@ -1,0 +1,7 @@
+The APK is now a signed release build rather than a debug one.
+
+Fixes a checkbox hint that ran on from its label without a line break, and two
+places that said "this computer" instead of "your device".
+
+Also stops requesting broad storage access on modern Android. Nothing ever
+needed it: files arrive as URIs you pick in the system document picker.

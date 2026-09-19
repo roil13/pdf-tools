@@ -1,0 +1,20 @@
+A complete PDF toolkit that works entirely on your device. No file ever leaves your phone, nothing is uploaded, everything works with no internet connection, and there are no AI features. Every tool writes a new file, so your originals are never modified.
+
+<b>Bookmarks and form fields survive every operation.</b> This is the reason the app carries a real build of qpdf, compiled to WebAssembly, instead of using a JavaScript PDF library. A PDF is an object graph: page content lives in page objects, but bookmarks, form fields and the tagged-structure tree live elsewhere and reference those pages. Rebuild the document carelessly and they are silently dropped. Many PDF tools lose them without telling you.
+
+<b>Tools</b>
+
+* <b>Read</b> - continuous scroll, pinch to zoom, full-text search, bookmarks and links, select and copy. Highlight, underline, strike out, add sticky notes, draw freehand, and fill in form fields, all saved as real PDF annotations.
+* <b>Scan</b> - photograph pages with the camera. The page edges are found and each shot straightened automatically. Reorder, rotate, crop and save as one PDF.
+* <b>Edit Pages</b> - drag pages to rearrange, rotate any of them, extract a selection, or remove pages and keep the rest.
+* <b>Merge</b> - combine PDFs with drag-and-drop ordering.
+* <b>Split</b> - break one PDF into several, at pages you choose, every N pages, one file per page, or at top-level bookmarks.
+* <b>Images to PDF</b> - turn pictures into a PDF, one page each, with rotate and crop. JPEG, PNG, WebP, GIF, BMP, AVIF, HEIC and TIFF.
+* <b>Make Searchable</b> - OCR a scanned PDF and add an invisible text layer so it can be searched, selected and copied. English and Hebrew, fully offline.
+* <b>Compress</b> - rebuild a PDF more efficiently, without losing quality.
+
+<b>English and Hebrew</b>, with a fully mirrored right-to-left layout. The interface follows your system language and can be switched at any time.
+
+Files are saved wherever you choose, through the system document picker.
+
+Free software under the MIT licence. Source code, and the reasoning behind how it was built and verified, are on GitHub.

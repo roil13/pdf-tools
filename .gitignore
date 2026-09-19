@@ -20,7 +20,10 @@ dist-e2e-crop/
 # Kept out of the repo the same way dist/ and release/ are -- it is build output,
 # not source. Anything hand-edited inside it would be lost on a re-add, so
 # nothing is.
-android/
+# Anchored with a leading slash: unanchored, this also matched
+# fastlane/metadata/android/, and the store metadata silently never
+# reached the repository.
+/android/
 
 # Real-world sample PDFs live outside the repo: the paths are machine-specific,
 # and someone's own document names do not belong in a public repository.

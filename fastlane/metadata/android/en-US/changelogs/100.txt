@@ -1,0 +1,6 @@
+First public release.
+
+Read, annotate and fill in forms. Scan pages with the camera. Reorder, merge,
+split, crop and compress. Offline OCR in English and Hebrew.
+
+Bookmarks and form fields survive every operation.
