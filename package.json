@@ -29,7 +29,8 @@
     "android:run": "node scripts/build-android.mjs --run",
     "probe:android": "node scripts/probe-android.mjs",
     "e2e:crop": "node scripts/e2e-crop.mjs",
-    "android:apk": "node scripts/build-android.mjs --apk"
+    "android:apk": "node scripts/build-android.mjs --apk",
+    "android:apk:release": "node scripts/build-android.mjs --apk-release"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.2",

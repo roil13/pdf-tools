@@ -25,3 +25,10 @@ android/
 # Real-world sample PDFs live outside the repo: the paths are machine-specific,
 # and someone's own document names do not belong in a public repository.
 test/samples.local.json
+
+# Release signing. The keystore lives outside the repo; this file holds its
+# location and passwords. Losing the keystore means never being able to ship an
+# update that installs over an existing copy, so back it up somewhere else.
+keystore.properties
+*.jks
+*.keystore

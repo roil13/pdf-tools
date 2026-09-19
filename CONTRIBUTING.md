@@ -71,6 +71,58 @@ and the Noto font.
 repository. Anything hand-edited there is lost on the next build; native sources
 belong in `native/android/`, which `scripts/build-android.mjs` installs.
 
+## Releasing
+
+```bash
+npm run package             # Windows installer + portable exe into release/
+npm run android:apk         # debuggable APK, for testing
+npm run android:apk:release # signed APK, for publishing
+```
+
+**The debug APK is the one to test with.** It keeps `android:debuggable`, which
+is what lets `chrome://inspect` reach the WebView — the only way to diagnose the
+camera capture, which cannot be tested on an emulator at all. A release APK is
+not debuggable.
+
+### Signing
+
+`npm run android:apk:release` needs a `keystore.properties` at the repository
+root. It is gitignored, and so is any `*.jks`:
+
+```properties
+storeFile=C:/path/to/your-release.jks
+storePassword=...
+keyAlias=...
+keyPassword=...
+```
+
+Create the keystore once, outside the repository:
+
+```bash
+keytool -genkeypair -v -keystore ~/your-release.jks -storetype PKCS12   -keyalg RSA -keysize 4096 -validity 10000 -alias your-alias
+```
+
+**Back it up somewhere that is not just your machine.** If you lose it you can
+never ship an update that installs over an existing copy — every user has to
+uninstall first. Changing keys is not something you can undo.
+
+Without `keystore.properties` the build still works; it simply refuses to
+produce a release APK, because an unsigned one is worse than useless (Android
+declines to install it).
+
+### Why the signing config is injected rather than committed
+
+`android/app/build.gradle` is **generated**. A `signingConfig` added to it by
+hand survives until the next `npx cap add android` and then vanishes, which you
+discover when an APK will not install. `installSigningAndVersion()` in
+`scripts/build-android.mjs` installs it on every build, for the same reason
+`installNativeSources()` installs the Java. It also stamps `versionCode` and
+`versionName` from `package.json`, since the generated project hard-codes 1 and
+"1.0" and nothing else would ever move them.
+
+No password is written into `build.gradle`. The injected Gradle reads
+`keystore.properties` at evaluation time.
+
 ## Writing things down
 
 `docs/spike-findings.md` records what was verified *empirically* and what it
