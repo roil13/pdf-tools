@@ -45,8 +45,37 @@ app.whenReady().then(async () => {
       ? pass(`crop surface is ${Math.round(box.w)}x${Math.round(box.h)}`)
       : fail(`crop surface has no size: ${JSON.stringify(box)}`);
 
+    /** The box's geometry as a string, cheap to compare. */
+    const boxRect = () => js(`(() => {
+      const r = document.querySelector('.cropper__box').getBoundingClientRect();
+      return [r.left, r.top, r.width, r.height].map((n) => Math.round(n)).join(',');
+    })()`);
+
+    /**
+     * Wait for the rectangle to move and then hold still.
+     *
+     * A fixed sleep here is a guess about how fast the machine is. On a CI
+     * runner -- no display, window never shown -- React's render can land well
+     * after it, and the next step then measures a stale DOM and computes its
+     * drag from the wrong corner. Failing that way looks like broken crop
+     * arithmetic rather than a slow machine.
+     */
+    const settled = async (before, ms = 3000) => {
+      const deadline = Date.now() + ms;
+      let value = before;
+      let stable = 0;
+      while (Date.now() < deadline) {
+        await sleep(50);
+        const now = await boxRect();
+        if (now === before) continue;
+        if (now !== value) { value = now; stable = 0; continue; }
+        if (++stable >= 3) return;
+      }
+    };
+
     /** Drag from one fraction of the surface to another, as a real pointer would. */
     const drag = async (selector, fromX, fromY, toX, toY) => {
+      const before = await boxRect();
       await js(`(() => {
         const el = document.querySelector(${JSON.stringify(selector)});
         const b = document.querySelector('.cropper__surface').getBoundingClientRect();
@@ -64,7 +93,7 @@ app.whenReady().then(async () => {
         }
         el.dispatchEvent(new PointerEvent('pointerup', at(${toX}, ${toY})));
       })()`);
-      await sleep(180);
+      await settled(before);
     };
 
     /** The rectangle as the DOM actually shows it, not as state claims. */
@@ -115,8 +144,9 @@ app.whenReady().then(async () => {
       : fail(`rectangle escaped: ${JSON.stringify(r)}`);
 
     // 6. Reset restores the whole image.
+    const beforeReset = await boxRect();
     await js(`[...document.querySelectorAll('.cropper__bar button')].find(b => /Whole page/.test(b.textContent)).click()`);
-    await sleep(200);
+    await settled(beforeReset);
     r = await shown();
     near(r.width, 1, 0.02) && near(r.height, 1, 0.02)
       ? pass('reset restores the whole image')
@@ -126,8 +156,13 @@ app.whenReady().then(async () => {
     await drag('.cropper__surface', 0.1, 0.1, 0.6, 0.6);
     const beforeApply = await shown();
     await js(`[...document.querySelectorAll('.cropper__bar button')].find(b => b.textContent.trim() === 'Crop').click()`);
-    await sleep(250);
-    const applied = await js('window.cropApplied ?? null');
+    // Wait for the callback to have fired rather than assuming it has.
+    const deadline = Date.now() + 3000;
+    let applied = null;
+    while (Date.now() < deadline && !applied) {
+      await sleep(50);
+      applied = await js('window.cropApplied ?? null');
+    }
     applied && near(applied.x, beforeApply.x) && near(applied.width, beforeApply.width)
       ? pass(`apply returned the rectangle shown (${applied.width.toFixed(2)} wide)`)
       : fail(`apply returned ${JSON.stringify(applied)} for ${JSON.stringify(beforeApply)}`);

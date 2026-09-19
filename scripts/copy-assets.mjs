@@ -54,8 +54,16 @@ await stage('node_modules/tesseract.js-core', 'tesseract/core',
   (n) => /-lstm\.(js|wasm)$/.test(n) || /-lstm\.wasm\.js$/.test(n));
 
 // Vendored language data and the Hebrew font for the OCR text layer.
-await stage('vendor/tessdata', 'tessdata', (n) => n.endsWith('.gz'));
-await stage('vendor/fonts', 'fonts', (n) => n.endsWith('.ttf'));
+//
+// The licence and NOTICE files ship beside them, not only in the repository:
+// the OFL requires its text to accompany the font wherever the font goes, and
+// the font goes into the installer and the APK. Same for the Apache-2.0 terms
+// on the Tesseract data.
+const withLicences = (ext) => (n) =>
+  n.endsWith(ext) || n === 'OFL.txt' || n === 'LICENSE.txt' || n === 'NOTICE.md';
+
+await stage('vendor/tessdata', 'tessdata', withLicences('.gz'));
+await stage('vendor/fonts', 'fonts', withLicences('.ttf'));
 
 // pdf.js's own text-layer CSS, without which its TextLayer renders a pile of
 // unpositioned spans: the rules read per-span custom properties (--font-height,
