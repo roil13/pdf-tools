@@ -75,6 +75,14 @@ app.whenReady().then(async () => {
       : fail(`expected a partial window, got ${mounted} of 10`);
 
     // 5. The scroll content is taller than the viewport, i.e. layout ran.
+    // Waited for rather than sampled once: on a slow machine the measurement
+    // lands before the virtualiser has laid the pages out, and 16px of content
+    // reads as a broken layout rather than one that has not happened yet.
+    await until(js, `(() => {
+      const v = document.querySelector('.rviewer');
+      const c = document.querySelector('.rviewer__content');
+      return !!v && !!c && c.getBoundingClientRect().height > v.clientHeight;
+    })()`);
     const geometry = await js(`(() => {
       const v = document.querySelector('.rviewer');
       const c = document.querySelector('.rviewer__content');
