@@ -200,6 +200,9 @@ input.invalid { border-color: var(--danger); }
 
 .check { display: flex; gap: 9px; align-items: flex-start; cursor: pointer; font-size: 13px; }
 .check input { margin: 2px 0 0; accent-color: var(--accent); cursor: pointer; }
+/* The hint is a <small> inside the label, so without this it runs straight on
+   from the label text: "...already have textStops a second run from...". */
+.check .field__hint { display: block; margin-block-start: 2px; }
 
 .radios { display: flex; flex-direction: column; gap: 2px; }
 .radio {

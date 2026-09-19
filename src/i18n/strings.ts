@@ -577,7 +577,7 @@ export const en: Strings = {
   'ocr.pre.pages': 'Pages',
   'ocr.pre.resolution': 'Resolution',
   'ocr.pre.languages': 'Languages',
-  'ocr.notice.time': 'Recognition takes a few seconds per page and runs entirely on this computer.',
+  'ocr.notice.time': 'Recognition takes a few seconds per page and runs entirely on your device.',
   'ocr.action.run': 'Make searchable',
   'ocr.action.working': 'Working…',
   'ocr.phase.starting': 'Starting…',
@@ -623,7 +623,7 @@ export const en: Strings = {
 
   'about.title': 'About',
   'about.blurb': 'A small offline toolkit for everyday PDF jobs.',
-  'about.privacyTitle': 'Everything happens on this computer.',
+  'about.privacyTitle': 'Everything happens on your device.',
   'about.privacyBody':
     'No file ever leaves your machine, nothing is uploaded, and the app works with no '
     + 'internet connection. There are no AI features.',
@@ -981,7 +981,7 @@ export const he: Strings = {
   'ocr.pre.pages': 'עמודים',
   'ocr.pre.resolution': 'רזולוציה',
   'ocr.pre.languages': 'שפות',
-  'ocr.notice.time': 'הזיהוי אורך כמה שניות לעמוד ורץ כולו על המחשב הזה.',
+  'ocr.notice.time': 'הזיהוי אורך כמה שניות לעמוד ורץ כולו על המכשיר שלך.',
   'ocr.action.run': 'הפיכה לניתן לחיפוש',
   'ocr.action.working': 'עובד…',
   'ocr.phase.starting': 'מתחיל…',
@@ -1029,7 +1029,7 @@ export const he: Strings = {
 
   'about.title': 'אודות',
   'about.blurb': 'ארגז כלים קטן ומקומי למשימות PDF יומיומיות.',
-  'about.privacyTitle': 'הכול קורה על המחשב הזה.',
+  'about.privacyTitle': 'הכול קורה על המכשיר שלך.',
   'about.privacyBody':
     'שום קובץ לא יוצא מהמחשב שלכם, שום דבר לא מועלה לרשת, והאפליקציה עובדת גם ללא חיבור '
     + 'לאינטרנט. אין בה שום יכולות בינה מלאכותית.',

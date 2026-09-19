@@ -36,6 +36,7 @@ run('npx', ['cap', 'sync', 'android']);
 
 installNativeSources();
 installSigningAndVersion();
+removeImpliedStoragePermission();
 
 /**
  * Copy the app's own Java into the generated project.
@@ -81,6 +82,52 @@ if (process.argv.includes('--run')) {
   run('npx', ['cap', 'run', 'android']);
 } else if (!wantsDebug && !wantsRelease) {
   console.log('\nNext: npx cap run android   (or open the project in Android Studio)');
+}
+
+/**
+ * Stop READ_EXTERNAL_STORAGE applying to every Android version.
+ *
+ * Nothing asks for it. The manifest merger IMPLIES it because the file-sharer
+ * plugin requests WRITE_EXTERNAL_STORAGE, which on old Android implied read
+ * access too -- and it arrived UNBOUNDED, so the app asked for broad storage
+ * access on every device. This app never reads storage broadly: every file
+ * arrives as a `content://` URI the user picked through the system document
+ * picker. Broad storage access is also the first thing a catalogue's reviewer
+ * looks at.
+ *
+ * The declaration below does not delete it outright -- the merger re-implies it
+ * from WRITE_EXTERNAL_STORAGE -- but the re-implied one inherits that
+ * permission's `maxSdkVersion="28"`. So on Android 10 and later the app now
+ * requests no storage permission at all, which is the part that matters.
+ *
+ * WRITE_EXTERNAL_STORAGE is deliberately left alone: something at API 28 or
+ * below may genuinely need it to share a file.
+ *
+ * Here rather than in the manifest itself because `android/` is generated.
+ */
+function removeImpliedStoragePermission() {
+  const manifest = 'android/app/src/main/AndroidManifest.xml';
+  const text = readFileSync(manifest, 'utf8');
+  if (text.includes('READ_EXTERNAL_STORAGE')) return;
+
+  const removal = [
+    '    <uses-permission android:name="android.permission.INTERNET" />',
+    '',
+    '    <!-- Implied by the file-sharer plugin asking for WRITE_EXTERNAL_STORAGE.',
+    '         Nothing reads storage broadly; files arrive as content:// URIs the',
+    '         user picked. Installed by scripts/build-android.mjs. -->',
+    '    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"',
+    '        tools:node="remove" />',
+  ].join('\n');
+
+  writeFileSync(manifest, text
+    .replace(
+      '<manifest xmlns:android="http://schemas.android.com/apk/res/android">',
+      '<manifest xmlns:android="http://schemas.android.com/apk/res/android"\n'
+      + '    xmlns:tools="http://schemas.android.com/tools">',
+    )
+    .replace('    <uses-permission android:name="android.permission.INTERNET" />', removal));
+  console.log('  capped the implied READ_EXTERNAL_STORAGE permission at API 28');
 }
 
 /**
