@@ -162,7 +162,7 @@ lets one renderer serve both Electron and an Android WebView.
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE). That covers the code here; the components
+MIT — see [LICENSE](LICENSE). That covers the code in this repository; the components
 redistributed under `vendor/` keep their own licences, listed below. qpdf ships
 its `LICENSE.txt` and `NOTICE.md` alongside the binaries in `vendor/qpdf/` and
 `vendor/qpdf-wasm/`.
