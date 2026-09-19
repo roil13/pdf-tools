@@ -1,0 +1,40 @@
+appId: com.lioryosub.pdftoolkit
+productName: PDF Toolkit
+copyright: Copyright 2026 Lior Yosub
+
+directories:
+  output: release
+  buildResources: build
+
+files:
+  - dist/**
+  - dist-electron/**
+  - package.json
+
+# qpdf ships as a sidecar binary rather than being bundled into the asar,
+# because it must be a real executable on disk to be spawned.
+extraResources:
+  - from: vendor/qpdf
+    to: qpdf
+
+asar: true
+compression: normal
+
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: portable
+      arch: [x64]
+  artifactName: ${productName} ${version} ${arch}.${ext}
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: PDF Toolkit
+
+portable:
+  artifactName: ${productName} ${version} portable.${ext}

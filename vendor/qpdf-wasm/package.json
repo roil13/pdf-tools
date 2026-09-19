@@ -1,0 +1,4 @@
+{
+  "//": "Emscripten emits UMD, whose CommonJS branch only fires when Node treats the file as CommonJS. The repo root sets \"type\": \"module\", so without this marker qpdf.js is loaded as ESM and exports nothing.",
+  "type": "commonjs"
+}

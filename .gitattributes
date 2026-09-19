@@ -1,0 +1,18 @@
+# Text is stored with LF and checked out however the platform prefers.
+* text=auto
+
+# Marked explicitly rather than left to git's content sniffing. This repository
+# ships the qpdf binaries, its WebAssembly build, the Tesseract language data
+# and byte-exact PDF fixtures; a single end-of-line substitution in any of them
+# is a corrupt file, and the failure would look like a bug in the writer.
+*.exe   binary
+*.dll   binary
+*.wasm  binary
+*.gz    binary
+*.ttf   binary
+*.pdf   binary
+*.png   binary
+*.tif   binary
+*.webp  binary
+*.jpg   binary
+*.ico   binary
