@@ -31,12 +31,31 @@ run('node', ['scripts/copy-assets.mjs']);
 console.log('\nbuilding the renderer');
 run('npx', ['vite', 'build']);
 
+ensurePlatform();
+
 console.log('\nsyncing into the android project');
 run('npx', ['cap', 'sync', 'android']);
 
 installNativeSources();
 installSigningAndVersion();
 removeImpliedStoragePermission();
+
+/**
+ * Create the Android project when there is not one.
+ *
+ * `android/` is generated and gitignored, so a fresh clone has none and
+ * `cap sync` fails with a message about the platform not having been added.
+ * Anyone building from source hits that on their first command, which is a poor
+ * introduction to a repository that otherwise builds in three steps.
+ *
+ * `cap add` needs `dist/` to exist, which is why this runs after the renderer
+ * build rather than first.
+ */
+function ensurePlatform() {
+  if (existsSync('android')) return;
+  console.log('\nno android/ project yet -- creating one');
+  run('npx', ['cap', 'add', 'android']);
+}
 
 /**
  * Copy the app's own Java into the generated project.
