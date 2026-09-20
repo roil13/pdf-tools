@@ -52,6 +52,63 @@ Available in English and Hebrew, with a fully mirrored right-to-left layout.
 
 Files are saved wherever the user chooses, through the system document picker.
 
+## Building from source
+
+Verified from a clean `git clone` on Windows, with no `android/` directory and no
+signing key present.
+
+### Prerequisites
+
+| | version used |
+|---|---|
+| Node.js | 24 (what CI uses) |
+| JDK | 21 (Android Studio's bundled JBR is fine) |
+| Android SDK | platform `android-36`, build-tools `36.0.0` |
+| Gradle | 8.14.3, downloaded automatically by the wrapper |
+
+`ANDROID_HOME` (or `ANDROID_SDK_ROOT`) must point at the SDK. `minSdkVersion` is
+24, `compileSdkVersion` and `targetSdkVersion` are 36.
+
+### Build
+
+```bash
+git clone https://github.com/roil13/pdf-tools.git
+cd pdf-tools
+npm ci
+npm run assets        # stage run-time assets into public/ -- NOT optional
+npm run android:apk   # debug APK
+```
+
+The APK lands at `android/app/build/outputs/apk/debug/app-debug.apk`.
+
+Three things worth knowing:
+
+- **`npm run assets` is required.** The renderer fetches the pdf.js cmaps and
+  standard fonts, the Tesseract core and language data, and the Noto font *by
+  URL* at run time. They are staged into `public/` from `node_modules` and
+  `vendor/` rather than committed, and nothing else stages them.
+- **There is no `android/` directory in the repository.** It is generated build
+  output; `npm run android:apk` runs `npx cap add android` when it is missing and
+  then installs the app's own Java sources, the signing configuration and the
+  version into it. Nothing inside `android/` is hand-edited, so nothing is lost
+  when it is regenerated.
+- **A release build needs a signing key**, which only the maintainer has.
+  `npm run android:apk:release` reads a gitignored `keystore.properties`; without
+  it the build stops and explains why rather than emitting an unsigned APK that
+  Android would refuse to install. Third parties build the debug variant above.
+
+### Running the tests
+
+```bash
+npm run verify
+```
+
+A repository audit, a type check, 255 unit tests, and four end-to-end suites that
+drive the real screens in a real Electron renderer. CI runs exactly
+`npm ci && npm run assets && npm run verify` on `windows-latest` for every push.
+Windows, because the integration tests read every PDF they produce back with the
+native `qpdf.exe` in `vendor/` rather than trusting the writer under test.
+
 ## Dependencies worth flagging
 
 **The Scan tool uses Google's ML Kit document scanner, which requires Google Play

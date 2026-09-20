@@ -19,6 +19,27 @@ the Noto font *by URL* at run time. Those are staged into `public/` out of
 not stage them itself. Without it the OCR and reader end-to-end suites fail in a
 way that looks like a bug in the code.
 
+### Building for Android
+
+```bash
+npm run android:apk          # debug APK, for testing
+npm run android:apk:release  # signed release APK -- see Releasing below
+```
+
+Needs a **JDK 21** (Android Studio's bundled JBR does) and an **Android SDK**
+with platform `android-36` and build-tools `36.0.0`, with `ANDROID_HOME` pointing
+at it. Gradle comes from the wrapper.
+
+**There is no `android/` directory in the repository** -- it is generated build
+output. The build creates it with `npx cap add android` when it is missing, then
+installs the app's own Java, the signing configuration and the version into it.
+That is why nothing inside `android/` is ever hand-edited: it would be lost on
+the next regeneration, silently, and you would find out when an APK refused to
+install.
+
+Verified from a clean clone; the full instructions, prerequisites and all, are in
+[`docs/izzyondroid-submission.md`](docs/izzyondroid-submission.md).
+
 ## The gate
 
 ```bash
