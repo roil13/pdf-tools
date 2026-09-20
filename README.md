@@ -98,6 +98,7 @@ src/          renderer — React UI, no Node access
 shared/types.ts   the Electron IPC wire contract
 vendor/       qpdf binary and its WebAssembly build, Tesseract data, Noto Sans Hebrew
 scripts/      build, dev, asset staging, and the spikes
+docs/about.md            what the app is and how it is put together
 docs/spike-findings.md   what was verified empirically, and why
 ```
 

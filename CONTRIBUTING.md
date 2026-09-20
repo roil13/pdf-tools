@@ -128,6 +128,10 @@ The catalogue picks up a new version automatically once a release is tagged and
 a release-signed APK is attached to it -- which is what `npm run
 android:apk:release` produces.
 
+The submission itself is a one-off issue on their tracker; the body is kept in
+[`docs/izzyondroid-submission.md`](docs/izzyondroid-submission.md) so a
+resubmission, or a submission elsewhere, does not start from a blank page.
+
 ### Why the signing config is injected rather than committed
 
 `android/app/build.gradle` is **generated**. A `signingConfig` added to it by
